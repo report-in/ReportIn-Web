@@ -1,5 +1,7 @@
+import emailjs from '@emailjs/browser';
 import { RootLayout } from '@/layouts/layout';
 import { useState } from 'react';
+import { Modal } from '@/components/modal/Modal';
 
 const ContactPage = () => {
   const [form, setForm] = useState({
@@ -8,18 +10,52 @@ const ContactPage = () => {
     subject: "",
     message: ""
   });
+  const [open, setOpen] = useState(false)
+  const [modalTitle, setModalTitle] = useState("")
+  const [modalMessage, setModalMessage] = useState("")
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Message sent!");
-  };
+    e.preventDefault()
+
+    emailjs
+      .send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        form,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      )
+      .then(() => {
+        setModalTitle("Success")
+        setModalMessage("Message sent successfully!")
+        setOpen(true)
+
+        setForm({
+          name: "",
+          email: "",
+          subject: "",
+          message: "",
+        })
+      })
+      .catch(() => {
+        setModalTitle("Error")
+        setModalMessage("Failed to send message. Please try again.")
+        setOpen(true)
+      })
+  }
 
   return (
     <RootLayout>
+      <Modal
+        open={open}
+        onOpenChange={setOpen}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={() => setOpen(false)}
+      />
       <div className="w-full max-w-6xl mx-auto px-4 mt-16 text-[#5d5d5d]">
         <div className="flex flex-col md:flex-row md:gap-4 items-center md:items-start justify-between">
           {/* Kiri: Judul, teks, ilustrasi */}

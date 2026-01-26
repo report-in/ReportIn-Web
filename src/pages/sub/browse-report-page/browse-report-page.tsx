@@ -95,13 +95,18 @@ const BrowseReportPage = () => {
     setDeleteReportModalOpen(true)
   }
 
-  const filteredReports = reports.filter(
-    (r) =>
-      r.area?.name?.toLowerCase().includes(searchTerm) ||
-      r.facilityUser?.some((c) => c.description.toLowerCase().includes(searchTerm)) ||
-      r.category?.name?.toLowerCase().includes(searchTerm) ||
-      r.lastUpdatedBy?.toLowerCase().includes(searchTerm),
-  )
+  const filteredReports = reports.filter((r) => {
+    const term = searchTerm.toLowerCase()
+
+    return (
+      r.area?.name?.toLowerCase().includes(term) ||
+      r.category?.name?.toLowerCase().includes(term) ||
+      r.lastUpdatedBy?.toLowerCase().includes(term) ||
+      r.facilityUser?.some((c) =>
+        c.description?.toLowerCase().includes(term),
+      )
+    )
+  })
 
   const totalPages = Math.ceil(filteredReports.length / ITEMS_PER_PAGE)
 

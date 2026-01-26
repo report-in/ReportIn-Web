@@ -81,13 +81,18 @@ const TechnicianPage = () => {
   const tabbedReports =
     activeTab === "myReports" ? reports.filter((r) => r.technician?.personId === person?.id) : reports
 
-  const filteredReports = tabbedReports.filter(
-    (r) =>
-      r.area?.name?.toLowerCase().includes(searchTerm) ||
-      r.facilityUser?.some((c) => c.description.toLowerCase().includes(searchTerm)) ||
-      r.category?.name?.toLowerCase().includes(searchTerm) ||
-      r.lastUpdatedBy?.toLowerCase().includes(searchTerm),
-  )
+  const filteredReports = tabbedReports.filter((r) => {
+    const term = searchTerm.toLowerCase()
+
+    return (
+      r.area?.name?.toLowerCase().includes(term) ||
+      r.category?.name?.toLowerCase().includes(term) ||
+      r.lastUpdatedBy?.toLowerCase().includes(term) ||
+      r.facilityUser?.some((c) =>
+        c.description?.toLowerCase().includes(term),
+      )
+    )
+  })
 
   const totalPages = Math.ceil(filteredReports.length / ITEMS_PER_PAGE)
 
